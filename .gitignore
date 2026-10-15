@@ -3,3 +3,6 @@ dist/
 dev-dist/
 *.tsbuildinfo
 .DS_Store
+
+# Wrangler
+.wrangler/

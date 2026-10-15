@@ -6,9 +6,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }
 
-/** Cloudflare Pages sets CF_PAGES_COMMIT_SHA; locally, ask git. */
+/** Cloudflare's Workers Builds and Pages set the commit; locally, ask git. */
 function buildID(): string {
-  const sha = process.env.CF_PAGES_COMMIT_SHA
+  const sha = process.env.WORKERS_CI_COMMIT_SHA ?? process.env.CF_PAGES_COMMIT_SHA
   if (sha) return sha.slice(0, 7)
   try {
     return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim()

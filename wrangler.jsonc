@@ -1,0 +1,15 @@
+{
+  // Served by Cloudflare Workers as static assets: `pnpm run build` writes dist/, and
+  // `wrangler deploy` uploads it. public/_headers (copied into dist/) sets the caching and
+  // Permissions-Policy headers.
+  "$schema": "https://unpkg.com/wrangler@4.151.0/config-schema.json",
+  "name": "bc125at-web",
+  "compatibility_date": "2026-10-12",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -72,18 +72,19 @@ tests, plus checks against the 19,505 frequencies measured on a real scanner and
 written by the Mac app's own `bc125at-cli`. `src/app` is the React UI. The protocol, as measured on
 hardware, is described in the Mac app's `SPEC.md`.
 
-## Deploying to Cloudflare Pages
+## Deploying to Cloudflare
 
-Connect the repository in the Cloudflare dashboard (**Workers & Pages ▸ Create ▸ Pages ▸ Connect
-to Git**) with:
+The site is a Cloudflare Worker serving static assets (`wrangler.jsonc`). Connect the repository in
+the Cloudflare dashboard (**Workers & Pages ▸ Create ▸ Import a repository**) with:
 
-- Framework preset: **None**
 - Build command: **`pnpm run build`** (Cloudflare installs with pnpm because of `pnpm-lock.yaml`)
-- Build output directory: **`dist`**
+- Deploy command: **`npx wrangler deploy`**
 
-Node comes from `.node-version`. `public/_headers` keeps `index.html` and the service worker from
-being cached, caches the hashed assets for a year, and allows `usb` and `serial` for the site. The
-build ID shown in **Help ▸ Preferences** is the commit Cloudflare built.
+`wrangler.jsonc` points wrangler at `dist/`, so it uploads the build as is instead of trying to
+configure the project itself. `public/_headers` keeps `index.html` and the service worker from
+being cached, caches the hashed assets for a year, and allows `usb` and `serial` for the site.
+Node comes from `.node-version`. The build ID shown in **Help ▸ Preferences** is the commit that
+was built.
 
 ## Acknowledgements
 
