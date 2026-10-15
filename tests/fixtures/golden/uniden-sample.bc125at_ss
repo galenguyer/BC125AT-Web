@@ -1,0 +1,18 @@
+Misc	K+S	Off	Off	8	14	1	4	Canada
+Priority	Plus
+WxPri	On
+Service	1	Police	On
+Service	2	Fire/Emergency	Off
+Custom	1	Search Bnak1	25000000	27995000	Off
+Custom	5	Search Bnak5	108000000	136991600	On
+CloseCall	Pri	On	Off	Off
+CloseCallBands	Off	On	Off	On	Off
+GeneralSearch	-5	On
+Conventional	1	Bank 1	On
+C-Freq	1	GUARD	121500000	AM	Off	Off	5	On
+C-Freq	2	TALKAROUND	155475000	NFM	C110.9	Off	-10	Off
+C-Freq	3		0	Auto	Off	On	2	Off
+Conventional	2	Fire	Off
+C-Freq	51	EMS	155340000	NFM	D265	On	0	Off
+C-Freq	52	SEARCH	151625000	NFM	Srch	Off	2	Off
+C-Freq	53	WX	162550000	FM	NoTone	Off	2	Off

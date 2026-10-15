@@ -1,0 +1,201 @@
+{
+  "banks" : [
+    {
+      "bank" : 1,
+      "name" : "Aviation",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 2,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 3,
+      "name" : "",
+      "scanEnabled" : false
+    },
+    {
+      "bank" : 4,
+      "name" : "Fire/EMS",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 5,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 6,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 7,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 8,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 9,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 10,
+      "name" : "",
+      "scanEnabled" : true
+    }
+  ],
+  "channels" : [
+    {
+      "channel" : 1,
+      "delay" : 2,
+      "frequency" : "121.5000",
+      "lockedOut" : false,
+      "modulation" : "AM",
+      "name" : "Air Guard",
+      "priority" : false,
+      "tone" : "Off"
+    },
+    {
+      "channel" : 2,
+      "delay" : 2,
+      "frequency" : "162.5500",
+      "lockedOut" : false,
+      "modulation" : "FM",
+      "name" : "NOAA \"1\", main",
+      "priority" : true,
+      "tone" : "NoTone"
+    },
+    {
+      "channel" : 75,
+      "delay" : -5,
+      "frequency" : "462.5625",
+      "lockedOut" : true,
+      "modulation" : "NFM",
+      "name" : "",
+      "priority" : false,
+      "tone" : "D036"
+    },
+    {
+      "channel" : 500,
+      "delay" : 0,
+      "frequency" : "406.0125",
+      "lockedOut" : false,
+      "modulation" : "AUTO",
+      "name" : "Last",
+      "priority" : false,
+      "tone" : "C100.0"
+    }
+  ],
+  "closeCall" : {
+    "alertBeep" : true,
+    "alertLight" : true,
+    "bandsEnabled" : [
+      false,
+      true,
+      false,
+      true,
+      false
+    ],
+    "lockOutHits" : false,
+    "mode" : 1
+  },
+  "format" : "net.k9fgt.bc125at.config",
+  "globalLockouts" : [
+    "155.1000",
+    "460.0250"
+  ],
+  "metadata" : {
+    "firmware" : "Version 1.06.06",
+    "model" : "BC125AT",
+    "notes" : "Line one\nLine \"two\"",
+    "readAt" : "2026-10-12T19:00:00Z"
+  },
+  "search" : {
+    "codeSearch" : true,
+    "customRanges" : [
+      {
+        "enabled" : true,
+        "lower" : "25.0000",
+        "upper" : "26.0000"
+      },
+      {
+        "enabled" : true,
+        "lower" : "28.0000",
+        "upper" : "29.6950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "29.7000",
+        "upper" : "49.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "50.0000",
+        "upper" : "54.0000"
+      },
+      {
+        "enabled" : true,
+        "lower" : "108.0000",
+        "upper" : "136.9916"
+      },
+      {
+        "enabled" : true,
+        "lower" : "137.0000",
+        "upper" : "143.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "144.0000",
+        "upper" : "147.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "225.0000",
+        "upper" : "380.0000"
+      },
+      {
+        "enabled" : true,
+        "lower" : "400.0000",
+        "upper" : "449.9937"
+      },
+      {
+        "enabled" : false,
+        "lower" : "450.0000",
+        "upper" : "469.9937"
+      }
+    ],
+    "delay" : -10,
+    "serviceGroupsEnabled" : [
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "settings" : {
+    "backlight" : "KS",
+    "bandPlan" : 0,
+    "batteryChargeHours" : 9,
+    "contrast" : 11,
+    "keyBeep" : 99,
+    "keyLock" : false,
+    "priorityMode" : 3,
+    "squelch" : 2,
+    "volume" : 3,
+    "weatherAlertPriority" : false
+  },
+  "version" : 1
+}

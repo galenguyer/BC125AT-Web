@@ -1,0 +1,207 @@
+{
+  "banks" : [
+    {
+      "bank" : 1,
+      "name" : "",
+      "scanEnabled" : false
+    },
+    {
+      "bank" : 2,
+      "name" : "Fire",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 3,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 4,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 5,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 6,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 7,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 8,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 9,
+      "name" : "",
+      "scanEnabled" : true
+    },
+    {
+      "bank" : 10,
+      "name" : "",
+      "scanEnabled" : true
+    }
+  ],
+  "channels" : [
+    {
+      "channel" : 1,
+      "delay" : 5,
+      "frequency" : "121.5000",
+      "lockedOut" : false,
+      "modulation" : "AM",
+      "name" : "GUARD",
+      "priority" : true,
+      "tone" : "Off"
+    },
+    {
+      "channel" : 2,
+      "delay" : -10,
+      "frequency" : "155.4750",
+      "lockedOut" : false,
+      "modulation" : "NFM",
+      "name" : "TALKAROUND",
+      "priority" : false,
+      "tone" : "C110.9"
+    },
+    {
+      "channel" : 51,
+      "delay" : 0,
+      "frequency" : "155.3400",
+      "lockedOut" : true,
+      "modulation" : "NFM",
+      "name" : "EMS",
+      "priority" : false,
+      "tone" : "D265"
+    },
+    {
+      "channel" : 52,
+      "delay" : 2,
+      "frequency" : "151.6250",
+      "lockedOut" : false,
+      "modulation" : "NFM",
+      "name" : "SEARCH",
+      "priority" : false,
+      "tone" : "Srch"
+    },
+    {
+      "channel" : 53,
+      "delay" : 2,
+      "frequency" : "162.5500",
+      "lockedOut" : false,
+      "modulation" : "FM",
+      "name" : "WX",
+      "priority" : false,
+      "tone" : "NoTone"
+    }
+  ],
+  "closeCall" : {
+    "alertBeep" : true,
+    "alertLight" : false,
+    "bandsEnabled" : [
+      false,
+      true,
+      false,
+      true,
+      false
+    ],
+    "lockOutHits" : false,
+    "mode" : 1
+  },
+  "format" : "net.k9fgt.bc125at.config",
+  "globalLockouts" : [
+
+  ],
+  "metadata" : {
+    "notes" : ""
+  },
+  "search" : {
+    "codeSearch" : true,
+    "customRanges" : [
+      {
+        "enabled" : true,
+        "lower" : "25.0000",
+        "upper" : "27.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "28.0000",
+        "upper" : "29.6950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "29.7000",
+        "upper" : "49.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "50.0000",
+        "upper" : "54.0000"
+      },
+      {
+        "enabled" : false,
+        "lower" : "108.0000",
+        "upper" : "136.9916"
+      },
+      {
+        "enabled" : true,
+        "lower" : "137.0000",
+        "upper" : "143.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "144.0000",
+        "upper" : "147.9950"
+      },
+      {
+        "enabled" : true,
+        "lower" : "225.0000",
+        "upper" : "380.0000"
+      },
+      {
+        "enabled" : true,
+        "lower" : "400.0000",
+        "upper" : "449.9937"
+      },
+      {
+        "enabled" : true,
+        "lower" : "450.0000",
+        "upper" : "469.9937"
+      }
+    ],
+    "delay" : -5,
+    "serviceGroupsEnabled" : [
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "settings" : {
+    "backlight" : "KS",
+    "bandPlan" : 1,
+    "batteryChargeHours" : 14,
+    "contrast" : 8,
+    "keyBeep" : 99,
+    "keyLock" : false,
+    "priorityMode" : 2,
+    "squelch" : 4,
+    "volume" : 1,
+    "weatherAlertPriority" : true
+  },
+  "version" : 1
+}
