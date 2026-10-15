@@ -548,8 +548,7 @@ export function ChannelGrid({ numbers, sort, setSort, query }: { numbers: number
       if (move !== 'none' && !cancelled) {
         const next = neighbourText(current, move === 'next')
         if (next) {
-          // Wait for the commit to land before starting the next edit.
-          setTimeout(() => beginEditing(next.number, next.column), 0)
+          beginEditing(next.number, next.column)
           return
         }
       }

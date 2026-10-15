@@ -333,12 +333,23 @@ textarea {
 /* MARK: Layout */
 
 .app {
-  display: grid;
-  grid-template-rows: auto auto 1fr var(--bar-height);
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
+.app > .topbar,
+.app > .banner {
+  flex: none;
+}
+
+.app > .livebar {
+  flex: none;
+  height: var(--bar-height);
+}
+
 .main {
+  flex: 1;
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
   min-height: 0;
@@ -714,10 +725,15 @@ textarea {
   flex: 1;
 }
 
+.channel-view > .detail {
+  flex: 1;
+}
+
 .grid-wrap {
   position: relative;
   flex: 1;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }

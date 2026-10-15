@@ -10,7 +10,9 @@ import { ArrowDownCircleIcon, CloseIcon } from './Icons'
  */
 export function UpdateNote() {
   const available = useUpdates((s) => s.status === 'available' && !s.hiddenForSession)
-  const busy = useScanner((s) => s.busy) || isBusy(useOperations((s) => s.sheet))
+  const scannerBusy = useScanner((s) => s.busy)
+  const sheetBusy = useOperations((s) => isBusy(s.sheet))
+  const busy = scannerBusy || sheetBusy
   if (!available) return null
   return (
     <div className="update-note" role="status">

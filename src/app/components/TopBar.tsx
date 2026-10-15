@@ -209,7 +209,9 @@ export function TopBar() {
   const title = useDocument((s) => documentTitle(s))
   const dirty = useDocument((s) => isDirty(s))
   const hasDevice = useScanner((s) => selectedDevice(s) !== null)
-  const busy = useScanner((s) => s.busy) || isBusy(useOperations((s) => s.sheet))
+  const scannerBusy = useScanner((s) => s.busy)
+  const sheetBusy = useOperations((s) => isBusy(s.sheet))
+  const busy = scannerBusy || sheetBusy
   const canUse = hasDevice && !busy
   const sidebarOpen = useUI((s) => s.sidebarOpen)
   return (
