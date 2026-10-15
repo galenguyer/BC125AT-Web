@@ -59,11 +59,11 @@ scanner is being read or written.
 ## Developing
 
 ```sh
-npm install
-npm run dev        # http://localhost:5173 (?demo for the simulated scanner)
-npm test           # the protocol and model library, with 116 tests
-npm run build      # tests, type check, then dist/
-npm run preview    # serve dist/, with the service worker
+pnpm install
+pnpm dev           # http://localhost:5173 (?demo for the simulated scanner)
+pnpm test          # the protocol and model library, with 119 tests
+pnpm build         # tests, type check, then dist/
+pnpm preview       # serve dist/, with the service worker
 ```
 
 `src/kit` is a TypeScript port of the Mac app's `BC125ATKit`: the model, validation, band plan,
@@ -78,7 +78,7 @@ Connect the repository in the Cloudflare dashboard (**Workers & Pages ▸ Create
 to Git**) with:
 
 - Framework preset: **None**
-- Build command: **`npm run build`**
+- Build command: **`pnpm run build`** (Cloudflare installs with pnpm because of `pnpm-lock.yaml`)
 - Build output directory: **`dist`**
 
 Node comes from `.node-version`. `public/_headers` keeps `index.html` and the service worker from
