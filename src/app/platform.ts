@@ -19,6 +19,8 @@ export const isApple = os === 'mac' || os === 'ios'
 const params = new URLSearchParams(location.search)
 /** `?demo` runs against a simulated scanner, for trying the app without hardware. */
 export const demoMode = params.has('demo')
+/** `?debug` logs every command, its reply and what the live bar shows, to the browser console. */
+export const debugMode = params.has('debug')
 /** `?nousb` pretends neither WebUSB nor Web Serial exists, to check the browser advice. */
 const forceUnsupported = params.has('nousb')
 

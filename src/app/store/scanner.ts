@@ -4,7 +4,7 @@ import type { ScanMode } from '../../kit/sync/scanMode'
 import { ScannerSession } from '../../kit/sync/session'
 import { grantedDevices, requestDevice, watchDevices, type ScannerDevice } from '../devices'
 import { liveErrorMessage } from '../messages'
-import type { TransportKind } from '../platform'
+import { debugMode, type TransportKind } from '../platform'
 import { usePrefs } from './prefs'
 import { useUI } from './ui'
 
@@ -250,6 +250,7 @@ class LiveMonitor {
     if (this.session && this.sessionDevice === device.id) return this.session
     await this.closeSession()
     const session = await ScannerSession.open(await device.open())
+    if (debugMode) logExchanges(session)
     this.session = session
     this.sessionDevice = device.id
     return session
@@ -310,8 +311,42 @@ class LiveMonitor {
     const settled = status.frequency !== null && (status.receiving || now - this.lastMove > SETTLE_MS)
     const change: Partial<ScannerState> = { status, settled }
     if (status.receiving && status.frequency !== null) change.lastHeard = { status, at: Date.now() }
+    if (debugMode) {
+      const shown = (s: LiveStatus | null, isSettled: boolean) => (s && isSettled ? `CH ${s.channel}` : 'Scanning…')
+      const before = shown(previous, get().settled)
+      const after = shown(status, settled)
+      if (before !== after) console.info(`[bc125at] ${clock()} live bar: ${before} → ${after}`)
+    }
     set(change)
   }
+}
+
+const debugStart = performance.now()
+const clock = () => `${((performance.now() - debugStart) / 1000).toFixed(3)} s`
+
+/**
+ * `?debug`: logs each command with the reply it got and how long it took, and warns when a reply
+ * doesn't belong to the command sent (its first field names another command).
+ */
+function logExchanges(session: ScannerSession) {
+  let sentAt = performance.now()
+  const transport = session.connection.transport
+  const write = transport.writeLine.bind(transport)
+  transport.writeLine = (line, timeoutMs) => {
+    sentAt = performance.now()
+    return write(line, timeoutMs)
+  }
+  session.connection.onExchange = (sent, reply) => {
+    const ms = (performance.now() - sentAt).toFixed(1)
+    const command = sent.split(',')[0]
+    const replyCommand = reply?.split(',')[0]
+    if (reply !== null && reply !== 'ERR' && reply !== 'NG' && replyCommand !== command) {
+      console.warn(`[bc125at] ${clock()} MISMATCH: sent ${sent} → got ${reply} (${ms} ms)`)
+    } else {
+      console.debug(`[bc125at] ${clock()} ${sent} → ${reply ?? '(no reply)'} (${ms} ms)`)
+    }
+  }
+  console.info(`[bc125at] ${clock()} opened a session`)
 }
 
 export const live = new LiveMonitor()
