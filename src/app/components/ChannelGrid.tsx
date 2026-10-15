@@ -494,12 +494,10 @@ export function ChannelGrid({ numbers, sort, setSort, query }: { numbers: number
         const b = indexOf.get(number)!
         select(rows.slice(Math.min(a, b), Math.max(a, b) + 1).map((r) => r.number))
         setFocus(null)
-        event.preventDefault()
       } else if (primary) {
         select(selected.has(number) ? selection.filter((n) => n !== number) : [...selection, number])
         anchor.current = number
         setFocus(null)
-        event.preventDefault()
       } else if (column === 'number') {
         select([number])
         anchor.current = number
@@ -509,12 +507,8 @@ export function ChannelGrid({ numbers, sort, setSort, query }: { numbers: number
         anchor.current = number
         setFocus({ number, column })
       }
-      // Keep keyboard focus on the grid, except for controls that take it themselves.
-      const target = event.target as HTMLElement
-      if (!target.closest('select, input, button')) {
-        event.preventDefault()
-        if (!editing) returnFocus()
-      }
+      // Keyboard focus goes to the grid (the focusable ancestor) on its own, except for controls
+      // that take it themselves. No preventDefault here: it would stop rows from being dragged.
     },
     doubleClick(number, column) {
       if (TEXT_COLUMNS.includes(column)) beginEditing(number, column)

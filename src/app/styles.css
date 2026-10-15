@@ -743,6 +743,13 @@ textarea {
   overflow: auto;
   outline: none;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.grid .cell-input {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .grid-inner {
