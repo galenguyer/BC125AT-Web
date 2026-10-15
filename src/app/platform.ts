@@ -51,7 +51,7 @@ export function preferredTransport(): TransportKind | null {
 export const transportName = (kind: TransportKind) => (kind === 'usb' ? 'WebUSB' : 'Web Serial')
 
 /** The modifier shown in menus: ⌘ on Apple systems, Ctrl elsewhere. */
-export const isPrimaryModifier = (event: KeyboardEvent | React.KeyboardEvent) => (isApple ? event.metaKey : event.ctrlKey)
+export const isPrimaryModifier = (event: { metaKey: boolean; ctrlKey: boolean }) => (isApple ? event.metaKey : event.ctrlKey)
 
 /** `⇧⌘R` on a Mac, `Ctrl+Shift+R` elsewhere. `keys` uses `mod`, `shift`, `alt` and the key. */
 export function shortcutLabel(keys: string): string {

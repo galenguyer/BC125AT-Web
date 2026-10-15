@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "types": ["vite/client", "vite-plugin-pwa/react", "w3c-web-usb", "w3c-web-serial", "wicg-file-system-access"],
+    "types": ["vite/client", "vite-plugin-pwa/client", "w3c-web-usb", "w3c-web-serial", "wicg-file-system-access"],
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
