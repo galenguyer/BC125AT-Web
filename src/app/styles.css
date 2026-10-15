@@ -803,16 +803,12 @@ textarea {
   border-bottom: 1px solid transparent;
 }
 
-.grid-row:nth-child(even of .grid-row) {
-  background: var(--bg-row-alt);
-}
-
 .grid-row.selected {
   background: var(--selection);
 }
 
 .grid-row.selected-cell-mode {
-  background: color-mix(in srgb, var(--selection) 45%, transparent);
+  background: color-mix(in srgb, var(--selection) 70%, transparent);
 }
 
 .grid-row.drop-target {
