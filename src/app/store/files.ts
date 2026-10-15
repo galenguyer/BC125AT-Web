@@ -22,10 +22,21 @@ export interface OpenedFile {
 
 const hasPickers = typeof window !== 'undefined' && 'showOpenFilePicker' in window && 'showSaveFilePicker' in window
 
-const pickerType = (kind: FileKind, extraExtensions: string[] = []): FilePickerAcceptType => ({
-  description: kind.description,
-  accept: { [kind.mime]: [`.${kind.extension}`, ...extraExtensions.map((e) => `.${e}`)] as `.${string}`[] },
-})
+/**
+ * Chrome's file pickers accept only extensions made of letters, digits and `+` (with dots between),
+ * and throw on anything else: `.bc125at_ss` is refused for its underscore.
+ */
+export const isValidPickerExtension = (extension: string) => /^[A-Za-z0-9+]+(\.[A-Za-z0-9+]+)*$/.test(extension)
+
+/**
+ * The picker's file type filter. A kind whose own extension the picker can't take gets no filter,
+ * so the picker shows every file rather than hiding the ones wanted.
+ */
+export function pickerTypes(kind: FileKind, extraExtensions: string[] = []): FilePickerAcceptType[] {
+  if (!isValidPickerExtension(kind.extension)) return []
+  const extensions = [kind.extension, ...extraExtensions].filter(isValidPickerExtension)
+  return [{ description: kind.description, accept: { [kind.mime]: extensions.map((e) => `.${e}`) as `.${string}`[] } }]
+}
 
 const isAbort = (error: unknown) => error instanceof DOMException && error.name === 'AbortError'
 
@@ -34,7 +45,7 @@ export async function chooseFile(kind: FileKind, extraExtensions: string[] = [])
   if (hasPickers) {
     try {
       // Any file is allowed too: Uniden's files and CSVs often arrive with other extensions.
-      const [handle] = await window.showOpenFilePicker({ types: [pickerType(kind, extraExtensions)], excludeAcceptAllOption: false, id: kind.extension })
+      const [handle] = await window.showOpenFilePicker({ types: pickerTypes(kind, extraExtensions), excludeAcceptAllOption: false, id: kind.extension })
       const file = await handle.getFile()
       return { name: file.name, text: await file.text(), handle }
     } catch (error) {
@@ -84,7 +95,7 @@ export async function saveFileAs(kind: FileKind, suggestedName: string, text: st
   const name = suggestedName.toLowerCase().endsWith(`.${kind.extension}`) ? suggestedName : `${suggestedName}.${kind.extension}`
   if (hasPickers) {
     try {
-      const handle = await window.showSaveFilePicker({ suggestedName: name, types: [pickerType(kind)], id: kind.extension })
+      const handle = await window.showSaveFilePicker({ suggestedName: name, types: pickerTypes(kind), excludeAcceptAllOption: false, id: kind.extension })
       await writeToHandle(handle, text)
       return { name: handle.name, handle }
     } catch (error) {
