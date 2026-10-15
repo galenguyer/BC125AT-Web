@@ -64,8 +64,10 @@ export const hasServiceWorker = () => registration !== null
 /** Saves everything, then switches to the new version, which reloads the page. */
 export async function reloadForUpdate() {
   await flushWorkspace(true)
+  // The new worker reloads the page once it takes control. A page loaded before any worker was
+  // installed (a first visit) is never taken over, so reload it directly if nothing happens.
+  setTimeout(() => location.reload(), 1500)
   if (applyUpdate) await applyUpdate(true)
-  else location.reload()
 }
 
 export function hideUpdateForSession() {
