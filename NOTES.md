@@ -1,0 +1,2 @@
+- Should check if an updated version of the app is available and prompt the user to refresh without losing data.
+- Should check if webusb/webserial is available and advise the user to switch browsers (helium my beloved...) if it's unavailable
