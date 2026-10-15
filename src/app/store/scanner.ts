@@ -87,6 +87,8 @@ class LiveMonitor {
   private pendingAction: Action | null = null
   private lastLevelChange = 0
   private lastMove = 0
+  /** A frequency ignored as a priority sample on the last poll (see `apply`). */
+  private ignoredSample: number | null = null
   private yielded = false
 
   get enabled() {
@@ -307,6 +309,17 @@ class LiveMonitor {
   private apply(status: LiveStatus) {
     const previous = get().status
     const now = performance.now()
+    // With priority on, the scanner samples the bank's priority channel every 2 seconds, even in
+    // hold. `GLG` then reports the priority channel's frequency under the held channel's number
+    // and name, with no signal, for one poll. That isn't the scanner moving: keep showing the held
+    // channel. A frequency that's still there on the next poll is real, and is shown.
+    const sample = previous && status.channel !== null && status.channel === previous.channel && status.frequency !== previous.frequency && !status.receiving
+    if (sample && this.ignoredSample !== status.frequency) {
+      this.ignoredSample = status.frequency
+      if (debugMode) console.info(`[bc125at] ${clock()} priority check on CH ${status.channel}: ignored ${status.frequency}`)
+      return
+    }
+    this.ignoredSample = null
     if (status.channel !== previous?.channel || status.frequency !== previous?.frequency) this.lastMove = now
     const settled = status.frequency !== null && (status.receiving || now - this.lastMove > SETTLE_MS)
     const change: Partial<ScannerState> = { status, settled }

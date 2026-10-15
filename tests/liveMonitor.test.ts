@@ -18,6 +18,9 @@ class StreamingTransport implements LineTransport {
   /** Every exchange, in order, with the reply the caller actually received. */
   readonly exchanges: { sent: string; received: string | null }[] = []
   private closed = false
+  /** Replaces the scanner's `GLG` replies, to replay ones recorded from a real scanner. */
+  static glg: (() => string | null) | null = null
+  private glg = () => StreamingTransport.glg?.() ?? null
 
   constructor(scanner: MockScanner) {
     this.scanner = scanner
@@ -28,7 +31,7 @@ class StreamingTransport implements LineTransport {
   async writeLine(line: string): Promise<void> {
     if (this.closed) throw new TransportError('closed')
     const fields = line.split(',')
-    const reply = encodeLine(this.scanner.reply(fields[0], fields.slice(1)))
+    const reply = encodeLine((fields[0] === 'GLG' && this.glg?.()) || this.scanner.reply(fields[0], fields.slice(1)))
     this.scanner.received.push(line)
     this.exchanges.push({ sent: line, received: null })
     // 1–6 ms later, in one or two packets.
@@ -96,6 +99,7 @@ describe('Live monitor against a USB-like transport', () => {
   })
 
   afterEach(async () => {
+    StreamingTransport.glg = null
     await scannerModule.live.setEnabled(false)
     transports.length = 0
     StreamingTransport.maxOpen = StreamingTransport.open
@@ -207,5 +211,44 @@ describe('Live monitor against a USB-like transport', () => {
     // Once held, it should go to the channel and stay there.
     const changes = afterHold.filter((s) => s.includes('CH ')).length
     expect(changes).toBeLessThanOrEqual(1)
+  }, 15_000)
+
+  // Recorded from a BC125AT held on channel 13 with priority on: every ~2 s the scanner samples the
+  // priority channel (channel 1, 121.5000), and GLG reports that frequency under channel 13.
+  const held13 = 'GLG,01187000,AM,,0,,,YYZ TWR N,0,1,,13,'
+  const prioritySample = 'GLG,01215000,AM,,0,,,YYZ TWR N,0,1,,13,'
+
+  it("priority checks during hold don't flicker the live bar", async () => {
+    const { live, useScanner } = scannerModule
+    testScanner = new MockScanner(sampleConfig())
+    prefsModule.usePrefs.setState({ liveEnabled: true })
+    let polls = 0
+    StreamingTransport.glg = () => (++polls % 10 === 0 ? prioritySample : held13)
+    await live.refreshDevices()
+    await wait(1200)
+    const bar = recordBar()
+    const frequencies = new Set<number | null>()
+    const unsubscribe = useScanner.subscribe((state) => frequencies.add(state.status?.frequency ?? null))
+    await wait(4500)
+    bar.unsubscribe()
+    unsubscribe()
+    console.log(`[priority] ${polls} polls, live bar: ${bar.shown.map((s) => s.text).join(' → ') || 'CH 13 throughout'}`)
+    expect(polls).toBeGreaterThan(15)
+    expect(bar.shown.map((s) => s.text)).not.toContain('Scanning…')
+    expect([...frequencies]).toEqual([1_187_000])
+  }, 15_000)
+
+  it('a frequency that changes and stays on the same channel is shown', async () => {
+    const { live, useScanner } = scannerModule
+    testScanner = new MockScanner(sampleConfig())
+    prefsModule.usePrefs.setState({ liveEnabled: true })
+    let changed = false
+    StreamingTransport.glg = () => (changed ? prioritySample : held13)
+    await live.refreshDevices()
+    await wait(1200)
+    expect(useScanner.getState().status?.frequency).toBe(1_187_000)
+    changed = true
+    await wait(1200)
+    expect(useScanner.getState().status?.frequency).toBe(1_215_000)
   }, 15_000)
 })
