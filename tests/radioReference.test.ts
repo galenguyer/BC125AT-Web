@@ -8,6 +8,7 @@ import {
   defaultSelection,
   emptyRun,
   firstEmptyRun,
+  importStart,
   insertChannels,
   radioReferenceEntries,
   radioReferenceName,
@@ -104,6 +105,16 @@ describe('RadioReference import', () => {
     expect(firstEmptyRun(config, 452)).toBeNull()
     expect(crossesBanks(45, 7)).toBe(true)
     expect(crossesBanks(41, 10)).toBe(false)
+  })
+
+  it('starts at an empty selected channel', () => {
+    const config = makeConfig()
+    config.channels[0] = makeChannel({ frequency: f('121.5') })
+    expect(importStart(config, [120, 80], 5)).toBe(80)
+    // A channel in use, or no selection, falls back to the first room that fits.
+    expect(importStart(config, [1, 300], 5)).toBe(2)
+    expect(importStart(config, [], 5)).toBe(2)
+    expect(importStart(config, [], 0)).toBe(2)
   })
 
   it('inserts only into empty channels', () => {

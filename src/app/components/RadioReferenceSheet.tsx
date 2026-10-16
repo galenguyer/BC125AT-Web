@@ -4,8 +4,9 @@ import { bankOfChannel, modulationName, type Channel } from '../../kit/model/cha
 import { CHANNEL_COUNT, type ScannerConfig } from '../../kit/model/config'
 import { mhz, type Frequency } from '../../kit/model/frequency'
 import { toneName } from '../../kit/model/tone'
-import { crossesBanks, defaultSelection, emptyRun, firstEmptyRun, type RadioReferenceEntry } from '../../kit/formats/radioReference'
+import { crossesBanks, defaultSelection, emptyRun, firstEmptyRun, importStart, type RadioReferenceEntry } from '../../kit/formats/radioReference'
 import { useDocument } from '../store/document'
+import { useUI } from '../store/ui'
 import { CheckCircleIcon, ErrorIcon, WarningIcon } from './Icons'
 import { Modal } from './Sheets'
 
@@ -24,8 +25,8 @@ const plural = (count: number, one: string, many: string) => `${count} ${count =
 
 export function RadioReferenceSheetHost() {
   const file = useRadioReference((s) => s.file)
-  // The document doesn't change while the sheet is open, so read it once.
-  return file ? <RadioReferenceSheet file={file} config={useDocument.getState().config} /> : null
+  // The document and table selection don't change while the sheet is open, so read them once.
+  return file ? <RadioReferenceSheet file={file} config={useDocument.getState().config} channelSelection={useUI.getState().selection} /> : null
 }
 
 /**
@@ -33,7 +34,7 @@ export function RadioReferenceSheetHost() {
  * them in (SPEC.md §5.2). Only rows the scanner can receive are offered, all selected to start
  * except ones already in the document with the same name and frequency.
  */
-function RadioReferenceSheet({ file, config }: { file: RadioReferenceFile; config: ScannerConfig }) {
+function RadioReferenceSheet({ file, config, channelSelection }: { file: RadioReferenceFile; config: ScannerConfig; channelSelection: number[] }) {
   const usable = useMemo(() => file.entries.filter((e) => e.channel !== null), [file])
   const skipped = useMemo(() => file.entries.filter((e) => e.channel === null), [file])
   /** Channel numbers already holding each frequency, to point out duplicates. */
@@ -46,7 +47,8 @@ function RadioReferenceSheet({ file, config }: { file: RadioReferenceFile; confi
   }, [config])
 
   const [selected, setSelected] = useState(() => defaultSelection(file.entries, config))
-  const [start, setStart] = useState(() => firstEmptyRun(config, Math.max(selected.size, 1)) ?? firstEmptyRun(config, 1) ?? 1)
+  // An empty channel selected in the table is where the import starts.
+  const [start, setStart] = useState(() => importStart(config, channelSelection, selected.size))
   const [startText, setStartText] = useState(String(start))
   const [filter, setFilter] = useState('')
 

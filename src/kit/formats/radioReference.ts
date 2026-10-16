@@ -207,6 +207,16 @@ export function emptyRun(config: ScannerConfig, start: number): number {
   return number - start
 }
 
+/**
+ * Where an import of `count` channels starts at first: the lowest selected channel if it's empty,
+ * otherwise the first run of empty channels that fits (or the first empty channel).
+ */
+export function importStart(config: ScannerConfig, selection: Iterable<number>, count: number): number {
+  const first = Math.min(...selection)
+  if (first >= 1 && first <= CHANNEL_COUNT && isEmptyChannel(channelAt(config, first))) return first
+  return firstEmptyRun(config, Math.max(count, 1)) ?? firstEmptyRun(config, 1) ?? 1
+}
+
 /** Whether `count` channels from `start` run past the end of `start`'s bank. */
 export const crossesBanks = (start: number, count: number) => count > 0 && bankOfChannel(start) !== bankOfChannel(start + count - 1)
 
