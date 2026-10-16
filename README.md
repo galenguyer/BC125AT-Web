@@ -26,6 +26,9 @@ It does everything the Mac app does:
 - **Compare with Scanner** lists how the scanner differs from your document without writing.
 - Opens and saves `.bc125at` files — byte-for-byte the same files the Mac app writes — imports and
   exports CSV (including bc125py's), and opens and saves Uniden's own `.bc125at_ss` files.
+- Imports frequencies from a RadioReference CSV export (**File ▸ Import from RadioReference…**):
+  pick which ones to add and the channel to start at. Digital and trunked frequencies, and ones
+  outside the scanner's bands, are left out; names, modulation and CTCSS/DCS tones come from the file.
 
 Your document is saved in the browser as you work, so closing the tab or reloading never loses it.
 Backups of the scanner taken before each write are kept in the browser too (**Scanner ▸ Backups**).

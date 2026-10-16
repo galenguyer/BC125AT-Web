@@ -1,9 +1,10 @@
-import { CHANNEL_COUNT, channelAt, configsEqual, makeConfig, usedChannelCount, type ScannerConfig } from '../kit/model/config'
-import { isEmptyChannel } from '../kit/model/channel'
+import { CHANNEL_COUNT, channelAt, channelPlan, configsEqual, makeConfig, usedChannelCount, type ScannerConfig } from '../kit/model/config'
+import { bankOfChannel, isEmptyChannel } from '../kit/model/channel'
 import { locationTitle, validateConfig } from '../kit/model/validation'
 import { CSVImportError, exportCSV, importCSV } from '../kit/formats/csv'
 import { decodeNative, encodeNative, NativeReadError } from '../kit/formats/native'
 import { decodeUniden, encodeUniden, UnidenImportError } from '../kit/formats/uniden'
+import { insertChannels, radioReferenceEntries, RadioReferenceImportError } from '../kit/formats/radioReference'
 import { writeSucceeded } from '../kit/sync/session'
 import { errorMessage } from './messages'
 import { alert, ask, confirm, setIssuesOpen } from './store/dialogs'
@@ -13,6 +14,7 @@ import * as operations from './store/operations'
 import { live, selectedDevice, useScanner } from './store/scanner'
 import { usePrefs } from './store/prefs'
 import { useUI } from './store/ui'
+import { useRadioReference } from './components/RadioReferenceSheet'
 import type { TransportKind } from './platform'
 
 const doc = () => useDocument.getState()
@@ -124,6 +126,50 @@ export async function exportChannelsCSV() {
   } catch (error) {
     await alert("Couldn't Export Channels", errorMessage(error))
   }
+}
+
+/**
+ * Opens the import sheet for a RadioReference CSV export (SPEC.md §5.2). The chosen channels go
+ * into empty channels as one undo step, and the table moves to show them.
+ */
+export async function importRadioReference() {
+  let file
+  try {
+    file = await chooseFile(csvKind, ['txt'])
+  } catch (error) {
+    return alert("Couldn't Read the RadioReference File", errorMessage(error))
+  }
+  if (!file) return
+  let entries
+  try {
+    entries = radioReferenceEntries(file.text, channelPlan(doc().config))
+  } catch (error) {
+    return alert("Couldn't Read the RadioReference File", error instanceof RadioReferenceImportError ? error.message : errorMessage(error))
+  }
+  if (!entries.some((e) => e.channel !== null)) {
+    return alert(
+      'No Frequencies to Import',
+      `None of the ${entries.length} frequencies in ${file.name} can be used on the BC125AT. It receives analog AM, FM and FMN in 25–54, 108–174, 225–380 and 400–512 MHz.`,
+    )
+  }
+  useRadioReference.setState({
+    file: {
+      name: file.name,
+      entries,
+      onImport(channels, start) {
+        let inserted = false
+        doc().edit((config) => {
+          inserted = insertChannels(config, channels, start)
+        })
+        if (!inserted) return
+        const end = start + channels.length - 1
+        const ui = useUI.getState()
+        ui.setSection(bankOfChannel(start) === bankOfChannel(end) ? { kind: 'bank', bank: bankOfChannel(start) } : { kind: 'allChannels' })
+        ui.setSelection(Array.from({ length: channels.length }, (_, i) => start + i))
+        ui.toast(`Imported ${plural(channels.length, 'channel', 'channels')} into ${channels.length === 1 ? `channel ${start}` : `channels ${start}–${end}`}.`)
+      },
+    },
+  })
 }
 
 /**

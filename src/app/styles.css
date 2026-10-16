@@ -1554,3 +1554,152 @@ textarea {
     display: none;
   }
 }
+
+/* MARK: RadioReference import */
+
+.sheet:has(.rr-sheet) {
+  max-width: 920px;
+}
+
+.rr-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.rr-toolbar,
+.rr-placement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rr-toolbar input {
+  flex: 1 1 220px;
+}
+
+.rr-placement input {
+  width: 72px;
+  text-align: right;
+}
+
+.rr-placement .spacer {
+  flex: 1;
+}
+
+.rr-table {
+  flex: 1 1 auto;
+  min-height: 140px;
+  max-height: 340px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.rr-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.rr-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 5px 8px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-bar);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.rr-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.rr-table td:nth-child(7) {
+  white-space: normal;
+  min-width: 180px;
+}
+
+.rr-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rr-table tr.off td:not(:first-child) {
+  color: var(--text-tertiary);
+}
+
+.rr-table label {
+  cursor: pointer;
+}
+
+.rr-note {
+  display: inline-flex;
+  color: var(--orange);
+}
+
+.rr-skipped summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.rr-skipped ul {
+  max-height: 120px;
+  overflow-y: auto;
+  margin: 6px 0 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.rr-skipped li {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 150px) minmax(0, 1fr);
+  gap: 8px;
+  padding: 3px 10px;
+  list-style: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.rr-skipped li:last-child {
+  border-bottom: none;
+}
+
+.rr-skipped li span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet p.rr-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  white-space: normal;
+}
+
+.rr-status svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.rr-status.success {
+  color: var(--green);
+}
+
+.rr-status.warning {
+  color: var(--orange);
+}
+
+.rr-status.error {
+  color: var(--red);
+}

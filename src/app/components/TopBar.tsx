@@ -37,6 +37,7 @@ function menus(): MenubarMenu[] {
         { kind: 'separator' },
         { label: 'Import Channels from CSV…', onSelect: () => void actions.importChannelsCSV() },
         { label: 'Export Channels as CSV…', onSelect: () => void actions.exportChannelsCSV() },
+        { label: 'Import from RadioReference…', onSelect: () => void actions.importRadioReference() },
         { kind: 'separator' },
         { label: 'Import Uniden File…', onSelect: () => void actions.importUnidenFile() },
         { label: 'Export as Uniden File…', onSelect: () => void actions.exportUnidenFile() },

@@ -16,6 +16,7 @@ import { LiveBar } from './components/LiveBar'
 import { PanelHost } from './components/Panels'
 import { LockoutsView, SearchView, SettingsView } from './components/SectionViews'
 import { DialogHost, OperationSheet } from './components/Sheets'
+import { RadioReferenceSheetHost, useRadioReference } from './components/RadioReferenceSheet'
 import { Sidebar } from './components/Sidebar'
 import { TopBar } from './components/TopBar'
 
@@ -58,7 +59,7 @@ const isTextField = (element: Element | null) =>
 function useShortcuts() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (useDialogs.getState().dialogs.length > 0 || useDialogs.getState().panel !== 'none' || useOperations.getState().sheet.kind !== 'none') return
+      if (useDialogs.getState().dialogs.length > 0 || useDialogs.getState().panel !== 'none' || useOperations.getState().sheet.kind !== 'none' || useRadioReference.getState().file) return
       const run = (action: () => unknown) => {
         event.preventDefault()
         void action()
@@ -140,6 +141,7 @@ export function App({ onUseHere }: { onUseHere: () => void }) {
       <LiveBar />
       <OperationSheet />
       <PanelHost />
+      <RadioReferenceSheetHost />
       <DialogHost />
       <ContextMenuHost />
       <Toasts />
