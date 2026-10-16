@@ -135,6 +135,25 @@ function build(entry: RadioReferenceEntry, plan: BandPlan) {
   entry.channel = channel
 }
 
+/**
+ * The usable rows to select at first, by line: all of them, except ones whose name and frequency
+ * are already on a channel in `config` or on an earlier row, so importing an overlapping file
+ * doesn't add the same channel twice.
+ */
+export function defaultSelection(entries: RadioReferenceEntry[], config: ScannerConfig): Set<number> {
+  const key = (name: string, frequency: number) => `${frequency}\u0000${name}`
+  const seen = new Set(config.channels.filter((c) => c.frequency !== null).map((c) => key(c.name, c.frequency!)))
+  const selected = new Set<number>()
+  for (const entry of entries) {
+    if (entry.channel?.frequency == null) continue
+    const k = key(entry.channel.name, entry.channel.frequency)
+    if (seen.has(k)) continue
+    seen.add(k)
+    selected.add(entry.line)
+  }
+  return selected
+}
+
 export function reasonForMode(mode: string): string {
   const key = [...mode.toUpperCase()].filter((c) => /[A-Z0-9]/.test(c)).join('')
   if (key === '') return 'No mode'

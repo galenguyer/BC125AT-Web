@@ -5,6 +5,7 @@ import { parseTone, TONE_NONE } from '../src/kit/model/tone'
 import { exportCSV } from '../src/kit/formats/csv'
 import {
   crossesBanks,
+  defaultSelection,
   emptyRun,
   firstEmptyRun,
   insertChannels,
@@ -73,6 +74,18 @@ describe('RadioReference import', () => {
   it('rejects other files', () => {
     expect(() => radioReferenceEntries(exportCSV(sampleConfig()).replace('Modulation', 'X'))).toThrow(/no Mode column/)
     expect(() => radioReferenceEntries('')).toThrow(RadioReferenceImportError)
+  })
+
+  it('leaves duplicates unselected', () => {
+    const entries = radioReferenceEntries(`${exported}118.30000,0.00000,,,Tower again,"ROC Tower",,,AM,BM,Aircraft\n`)
+    const config = makeConfig()
+    // Same name and frequency as line 3, so it's left out; same frequency as line 2 with another
+    // name, so that one stays selected.
+    config.channels[6] = makeChannel({ name: 'Webster Highway', frequency: f('37.9'), modulation: 'FM' })
+    config.channels[7] = makeChannel({ name: 'Tower', frequency: f('118.3'), modulation: 'AM' })
+    // Line 11 repeats line 2 within the file.
+    expect([...defaultSelection(entries, config)]).toEqual([2, 4, 9])
+    expect([...defaultSelection(entries, makeConfig())]).toEqual([2, 3, 4, 9])
   })
 
   it('finds room for channels', () => {

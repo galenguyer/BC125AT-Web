@@ -4,7 +4,7 @@ import { bankOfChannel, modulationName, type Channel } from '../../kit/model/cha
 import { CHANNEL_COUNT, type ScannerConfig } from '../../kit/model/config'
 import { mhz, type Frequency } from '../../kit/model/frequency'
 import { toneName } from '../../kit/model/tone'
-import { crossesBanks, emptyRun, firstEmptyRun, type RadioReferenceEntry } from '../../kit/formats/radioReference'
+import { crossesBanks, defaultSelection, emptyRun, firstEmptyRun, type RadioReferenceEntry } from '../../kit/formats/radioReference'
 import { useDocument } from '../store/document'
 import { CheckCircleIcon, ErrorIcon, WarningIcon } from './Icons'
 import { Modal } from './Sheets'
@@ -30,7 +30,8 @@ export function RadioReferenceSheetHost() {
 
 /**
  * Choose which frequencies from a RadioReference export to import, and the empty channels to put
- * them in (SPEC.md §5.2). Only rows the scanner can receive are offered, all selected to start.
+ * them in (SPEC.md §5.2). Only rows the scanner can receive are offered, all selected to start
+ * except ones already in the document with the same name and frequency.
  */
 function RadioReferenceSheet({ file, config }: { file: RadioReferenceFile; config: ScannerConfig }) {
   const usable = useMemo(() => file.entries.filter((e) => e.channel !== null), [file])
@@ -44,8 +45,8 @@ function RadioReferenceSheet({ file, config }: { file: RadioReferenceFile; confi
     return map
   }, [config])
 
-  const [selected, setSelected] = useState(() => new Set(usable.map((e) => e.line)))
-  const [start, setStart] = useState(() => firstEmptyRun(config, usable.length) ?? firstEmptyRun(config, 1) ?? 1)
+  const [selected, setSelected] = useState(() => defaultSelection(file.entries, config))
+  const [start, setStart] = useState(() => firstEmptyRun(config, Math.max(selected.size, 1)) ?? firstEmptyRun(config, 1) ?? 1)
   const [startText, setStartText] = useState(String(start))
   const [filter, setFilter] = useState('')
 
@@ -85,7 +86,13 @@ function RadioReferenceSheet({ file, config }: { file: RadioReferenceFile; confi
     const list: string[] = []
     if (entry.note) list.push(entry.note)
     const numbers = entry.channel?.frequency != null ? existing.get(entry.channel.frequency) : undefined
-    if (numbers) list.push(`Already on channel ${numbers.join(', ')}`)
+    if (numbers) {
+      list.push(
+        numbers.some((n) => config.channels[n - 1].name === entry.channel!.name)
+          ? `Already on channel ${numbers.join(', ')} with the same name, so it isn't selected`
+          : `This frequency is already on channel ${numbers.join(', ')}`,
+      )
+    }
     return list.join('\n')
   }
   const confirmImport = () => {
