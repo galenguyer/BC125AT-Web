@@ -53,6 +53,7 @@ export async function read(apply: (config: ScannerConfig) => void) {
   try {
     const config = await live.withScanner('Paused while reading from the scanner', true, (session) =>
       session.readConfiguration({ signal, progress: throttled('reading', 10) }),
+      signal,
     )
     apply(config)
     set({ kind: 'readFinished', config })
@@ -74,6 +75,7 @@ export async function prepare(document: ScannerConfig, compareOnly: boolean) {
   try {
     const scanner = await live.withScanner('Paused while checking the scanner', true, (session) =>
       session.readConfiguration({ signal, progress: throttled('checking', 10) }),
+      signal,
     )
     const plan = makeWritePlan(scanner, document)
     set(plan.steps.length === 0 ? { kind: 'upToDate' } : compareOnly ? { kind: 'compared', plan } : { kind: 'review', plan, scanner })
@@ -112,6 +114,7 @@ export async function write(apply: (report: WriteReport, plan: WritePlan) => voi
           if (now.kind === 'writing') set({ ...now, progress })
         },
       }),
+      signal,
     )
     apply(report, plan)
     set({ kind: 'writeFinished', report, plan, backup })

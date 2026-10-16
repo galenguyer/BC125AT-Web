@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { LiveStatus } from '../../kit/model/liveStatus'
 import type { ScanMode } from '../../kit/sync/scanMode'
-import { ScannerSession } from '../../kit/sync/session'
+import { CancellationError, ScannerSession } from '../../kit/sync/session'
 import { grantedDevices, requestDevice, watchDevices, type ScannerDevice } from '../devices'
 import { liveErrorMessage } from '../messages'
 import { debugMode, type TransportKind } from '../platform'
@@ -164,9 +164,10 @@ class LiveMonitor {
    * Runs `work` with the scanner to itself: pauses polling, makes sure a session is open, and
    * resumes polling afterwards. Every read, write and release goes through here. With
    * `keepingMode`, it first notes whether the scanner is scanning or held, and afterwards puts it
-   * back, since program mode leaves it held on channel 1 (SPEC.md §3.8).
+   * back, since program mode leaves it held on channel 1 (SPEC.md §3.8). `signal` cancels that
+   * first check too, not just `work`.
    */
-  async withScanner<T>(reason: string, keepingMode: boolean, work: (session: ScannerSession) => Promise<T>): Promise<T> {
+  async withScanner<T>(reason: string, keepingMode: boolean, work: (session: ScannerSession) => Promise<T>, signal?: AbortSignal): Promise<T> {
     const device = selectedDevice()
     if (!device) throw new Error('No scanner is connected.')
     set({ busy: true })
@@ -174,7 +175,12 @@ class LiveMonitor {
     await this.stop({ kind: 'paused', reason }, false)
     try {
       const session = await this.openSession(device)
-      const mode = keepingMode ? await session.scanMode().catch(() => null) : null
+      const mode = keepingMode
+        ? await session.scanMode(signal).catch((error) => {
+            if (error instanceof CancellationError) throw error
+            return null
+          })
+        : null
       const finish = async () => {
         if (mode) set({ lastRestore: { mode, succeeded: await session.restore(mode).catch(() => false) } })
         else if (keepingMode) set({ lastRestore: null })
