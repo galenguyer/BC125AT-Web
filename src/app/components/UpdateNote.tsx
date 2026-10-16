@@ -21,10 +21,10 @@ export function UpdateNote() {
         type="button"
         className="grow"
         disabled={busy}
-        title={busy ? 'Finish with the scanner first' : 'Reload to use the new version. Your document is kept.'}
+        title={busy ? 'A new version is ready. Reload once the scanner is finished.' : 'A new version is available. Reload to use it; your document is kept.'}
         onClick={() => void reloadForUpdate()}
       >
-        {busy ? 'Update ready after this finishes' : 'Update available: Reload'}
+        {busy ? 'Update waiting' : 'Reload to update'}
       </button>
       <button type="button" title="Later: hide until next time" aria-label="Hide update note until next time" onClick={hideUpdateForSession}>
         <CloseIcon />
